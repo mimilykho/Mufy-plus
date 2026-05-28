@@ -1,14 +1,14 @@
 import streamlit as st
 import base64
 
-# 1. PAGE INITIALIZATION (Must be the very first Streamlit command)
+# 1. PAGE INITIALIZATION (Must be the very first command)
 st.set_page_config(
     page_title="Cozy Focus Space",
     page_icon="🌸",
     layout="wide"
 )
 
-# 2. INS STYLE - CLEAN, SIMPLE, & MINIMAL PASTEL PRESETS
+# 2. INS STYLE - CLEAN & MINIMAL PASTEL PRESETS
 BACKGROUNDS = {
     "INS Cream Linen 🥛": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1920",
     "Soft Sage Leaf 🌱": "https://images.unsplash.com/photo-1540932239986-30128078f3c5?q=80&w=1920",
@@ -18,25 +18,15 @@ BACKGROUNDS = {
     "Muted Pastel Lavender 🪻": "https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?q=80&w=1920"
 }
 
-# High-focus, peace-inducing audio tracks for studying
-MUSIC_TRACKS = {
-    "🎹 Soft Ghibli Piano (Study Instrumentals)": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",
-    "🌧️ Tokyo Cafe Rain (Focus Background Noise)": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-    "🌳 Cozy Forest Campfire (Nature Ambience)": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3",
-    "🧸 Sweet Music Box (Calm Mindset)": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
-    "🧠 Focus Alpha Waves (Binaural Beats)": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-15.mp3"
-}
-
 # 3. SIDEBAR CONTROLS
 st.sidebar.title("🌸 Study Settings")
 st.sidebar.markdown("Configure your perfect aesthetic study environment below.")
 st.sidebar.markdown("---")
 
 # --- Dynamic Background Chooser ---
-st.sidebar.subheader("🖼️ Choose Vibe")
 bg_mode = st.sidebar.radio(
     "Background Source", 
-    ["Preset Themes", "Upload My Own"]
+    ["Preset Themes", "Paste an Image Link", "Upload From Computer"]
 )
 
 selected_bg_url = ""
@@ -44,16 +34,25 @@ selected_bg_url = ""
 if bg_mode == "Preset Themes":
     bg_choice = st.sidebar.selectbox("Select Theme Background", list(BACKGROUNDS.keys()))
     selected_bg_url = BACKGROUNDS[bg_choice]
+
+elif bg_mode == "Paste an Image Link":
+    custom_url = st.sidebar.text_input(
+        "Paste your copied image link here:", 
+        placeholder="https://example.com/your-image.jpg"
+    )
+    if custom_url:
+        selected_bg_url = custom_url
+    else:
+        selected_bg_url = BACKGROUNDS["INS Cream Linen 🥛"]
+
 else:
-    uploaded_file = st.sidebar.file_uploader("Upload a cute/peaceful photo", type=["png", "jpg", "jpeg"])
+    uploaded_file = st.sidebar.file_uploader("Choose a photo from your device", type=["png", "jpg", "jpeg"])
     if uploaded_file is not None:
         file_bytes = uploaded_file.read()
         base64_image = base64.b64encode(file_bytes).decode("utf-8")
         selected_bg_url = f"data:image/jpeg;base64,{base64_image}"
     else:
         selected_bg_url = BACKGROUNDS["INS Cream Linen 🥛"] 
-        st.sidebar.info("Showing default preset until you upload a photo.")
-
 
 # --- Dynamic Motivation Customization ---
 st.sidebar.subheader("✨ Motivation Word")
@@ -66,7 +65,7 @@ user_motivation = st.sidebar.text_input(
 st.sidebar.subheader("🎨 Text Styling")
 user_text_color = st.sidebar.color_picker("Pick a Custom Text Color", "#5C677D")
 
-# Inject CSS safely using double curly brackets to prevent Python layout parsing syntax issues
+# Inject CSS safely using double curly brackets to preserve style layouts
 bg_css = f"""
 <style>
 [data-testid="stAppViewContainer"] {{
@@ -78,7 +77,6 @@ bg_css = f"""
 [data-testid="stHeader"] {{
     background: rgba(0,0,0,0);
 }}
-/* Clean, soft glassmorphism card for INS aesthetic */
 .cozy-card {{
     background-color: rgba(255, 255, 255, 0.88);
     padding: 35px;
@@ -119,22 +117,10 @@ bg_css = f"""
 .app-button:hover {{
     background-color: {user_text_color};
     color: #FFFFFF !important;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.04);
 }}
 </style>
 """
 st.markdown(bg_css, unsafe_allow_html=True)
-
-
-# --- Music Toggle System ---
-st.sidebar.subheader("🎵 Study Music")
-music_on = st.sidebar.toggle("Turn On Music", value=False)
-
-if music_on:
-    track_choice = st.sidebar.selectbox("Select Study Sound", list(MUSIC_TRACKS.keys()))
-    st.sidebar.audio(MUSIC_TRACKS[track_choice], format="audio/mp3", loop=True)
-else:
-    st.sidebar.info("Music is turned off.")
 
 
 # 4. MAIN USER INTERFACE
@@ -145,19 +131,20 @@ st.title("🌱 Cozy Productivity Center")
 if user_motivation:
     st.markdown(f'<div class="motivation-banner">✨ "{user_motivation}"</div>', unsafe_allow_html=True)
 
-st.markdown("Your peaceful environment for deep work. Choose your background sound below and tap into your workspace apps seamlessly.")
+st.markdown("Your peaceful environment for deep work. Tap into your workspace apps seamlessly below.")
 st.markdown("---")
 
 # Main Hub Application Direct Launch Grid
 st.subheader("🚀 Open Your Productivity Ecosystem")
+st.markdown("Click an application below to open your tracking platform instantly in a new tab:")
 
-# Grid layout with 3 columns
+# Grid layout with 3 columns for YPT, Forest, and Pomodoro
 col_ypt, col_forest, col_pomo = st.columns(3)
 
 with col_ypt:
-    st.markdown("### 📺 Study With Me Stream")
-    st.markdown("Watch an aesthetic, peaceful focus room video to study alongside.")
-    st.video("https://www.youtube.com/watch?v=turbZg2m8I0")
+    st.markdown("### 🔥 Yeolpumta")
+    st.markdown("Join study groups and track real-time focus with friends globally.")
+    st.markdown('<a href="https://www.yeolpumta.com/en/" target="_blank" class="app-button">⏱️ Open YPT</a>', unsafe_allow_html=True)
 
 with col_forest:
     st.markdown("### 🌲 Forest App")
@@ -170,3 +157,4 @@ with col_pomo:
     st.markdown('<a href="https://pomofocus.io/" target="_blank" class="app-button">⏳ Open Pomofocus</a>', unsafe_allow_html=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
+   
